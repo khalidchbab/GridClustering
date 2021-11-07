@@ -14,3 +14,5 @@ for i in range(20000):
         ones.append(r)
 
 print(len(ones)/20000)
+
+print()

@@ -26,6 +26,7 @@ class World:
         self.rows = rows
         self.cols = rows
         self.win  = pygame.display.set_mode((self.width, self.width))
+        pygame.display.set_caption("Tri Collectif SMA - Khalid CHBAB - Adnane DRIOUCHE")
         self.n_rewards = n_rewards
         self.n_agents = n_agents
         self.terrain = None

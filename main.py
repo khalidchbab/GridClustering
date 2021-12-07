@@ -1,6 +1,17 @@
 import pygame
 import time
 from Models.world import World
+from Models.reward import Reward
+
+def get_clicked_pos(pos, rows, width):
+    gap = width // rows
+    y, x = pos
+
+    row = y // gap
+    col = x // gap
+
+    return row, col
+
 
 def main(width,n_agent,n_rewards,rows,memory_size,k,k_n):
     world = World(width,rows,n_agent,n_rewards)
@@ -26,3 +37,4 @@ def main(width,n_agent,n_rewards,rows,memory_size,k,k_n):
     pygame.quit()
 
 main(800,20,200,50,10,0.1,0.3)
+

@@ -23,6 +23,9 @@ class Spot:
         self.width = width
         self.agent = None
         self.reward = None
+
+        # part 2
+        self.phero = 0
     
     def is_empty(self):
         return True if not self.agent else False
@@ -40,6 +43,9 @@ class Spot:
 
 
     def draw(self, win):
+        if self.phero != 0:
+            self.phero = self.phero - 5 if self.phero - 3 > 0 else 0
+        self.color = WHITE if self.phero == 0 else (255 - self.phero, 255 - self.phero, 255 - self.phero)
         if self.is_empty():
             pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
         else:

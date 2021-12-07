@@ -1,6 +1,5 @@
 from random import randrange
 import pygame
-import random
 
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -36,4 +35,7 @@ class Reward:
             cerc = pygame.draw.circle(win, PURPLE, (self.x + int(self.width/2), self.y+ int(self.width/2)),(self.width / 2)-4)
         if self.type == "B" and not self.is_taken:
             cerc = pygame.draw.circle(win, RED, (self.x + int(self.width/2), self.y+ int(self.width/2)),(self.width / 2)-4)
+        if self.type == "C" and not self.is_taken:
+            cerc = pygame.draw.circle(win, TURQUOISE, (self.x + int(self.width/2), self.y+ int(self.width/2)),(self.width / 2)-4)
+
     

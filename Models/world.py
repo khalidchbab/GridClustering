@@ -60,6 +60,9 @@ class World:
             row,col = self.__get_start_place(l,self.rows)
             rewards.append(Reward("B",row,col,self.width // self.rows))
             l.append((row,col))
+            row,col = self.__get_start_place(l,self.rows)
+            rewards.append(Reward("C",row,col,self.width // self.rows))
+            l.append((row,col))
         return rewards
 
     def build_world(self):
@@ -72,6 +75,7 @@ class World:
                 terrain[i].append(spot)
 
         self.terrain = terrain
+        print(terrain[10][5].row,terrain[10][5].col)
 
 
     def draw_world(self):
@@ -82,7 +86,7 @@ class World:
                 pygame.draw.line(self.win, GREY, (j * gap, 0), (j * gap, self.width))
 
     def draw(self):
-        self.win.fill(WHITE)
+        # self.win.fill(WHITE)
         for row in self.terrain:
             for spot in row:
                 spot.draw(self.win)
@@ -104,6 +108,8 @@ class World:
         row = a.row
         col = a.col
         space = set()
+        rewards = []
+        agents_asking = []
         for i in range(-1,2):
             for j in range(-1,2):
                 if i == 0 and j == 0:
@@ -112,9 +118,14 @@ class World:
                     if row + i >= self.rows or col + j >= self.rows or row + i < 0 or col + j < 0:
                         space.add((0,0))
                     else :
-                        space.add((i,j) if grid[row+i][col+j].is_empty() else (0,0))
+                        space.add((i,j,grid[row+i][col+j].phero) if grid[row+i][col+j].is_empty() else (0,0))
+                        if grid[row+i][col+j].agent is not None:
+                            if grid[row+i][col+j].agent.waiting == True:
+                                agents_asking.append(grid[row+i][col+j].agent)
+                        if grid[row+i][col+j].is_reward():
+                            rewards.append(grid[row+i][col+j].reward)
         space.remove((0,0))
-        return space,grid[row][col]
+        return space,grid[row][col],rewards,agents_asking
     
     def __get_infos_backup(self,a:Agent,grid):
         row = a.row
@@ -138,6 +149,24 @@ class World:
 
     def decision(self):
         for a in self.agents:
-            posibilities,rewards = self.__get_infos(a,self.terrain)
-            a.action(posibilities,rewards)
+            posibilities,spot,rewards,agents_asking = self.__get_infos(a,self.terrain)
+            a.action(posibilities,spot,rewards,agents_asking)
+            if a.waiting and a.w_counting == 1:
+                self.__propagate_phero(a)
+    
+    def __calculate_distance(self,a,i,j):
+        distance = max(abs(i),abs(j)) == 1
+        return 1 if distance == True else 2
+    
+    def __propagate_phero(self,a):
+        for i in range(-2,3):
+            for j in range(-2,3):
+                if i == 0 and j == 0:
+                    self.terrain[a.row + i][a.col+ j].phero = 100
+                else:
+                    v = self.__calculate_distance(a,i,j)
+                    if not (a.row + i >= self.rows or a.col + j >= self.rows or a.row + i < 0 or a.col + j < 0):
+                        self.terrain[a.row + i][a.col+ j].phero = 100 - 10 * v
+
+                
 
